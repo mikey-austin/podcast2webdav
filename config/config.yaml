@@ -1,0 +1,25 @@
+# Sample configuration file
+
+# No spaces in app name
+appName: Podcast2Webdev
+
+# The list of podcast feeds
+feeds:
+  - name: nihongo-con-teppei-z
+    url: https://nihongoconteppeiz.com/feed/podcast/nihongo-con-teppei-z
+  - name: the-real-japanese-podcast
+    url: https://anchor.fm/s/26aec4fc/podcast/rss
+  - name: nihongo-zatsudan
+    url: https://anchor.fm/s/ac8fed8/podcast/rss
+  - name: learn-japanese-with-noriko
+    url: https://anchor.fm/s/1380f800/podcast/rss
+  - name: lets-talk-in-japanese
+    url: https://anchor.fm/s/c56bd1c/podcast/rss
+  - name: sbs-japanese
+    url: https://feeds.sbs.com.au/sbs-japanese
+  - name: nihongo-te
+    url: https://anchor.fm/s/61f5260/podcast/rss
+  - name: kotsu-kotsu-nihongo
+    url: https://anchor.fm/s/4cb51048/podcast/rss
+  - name: yuyu-nihongo
+    url: https://anchor.fm/s/cda85d4/podcast/rss
