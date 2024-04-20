@@ -20,8 +20,9 @@ import (
 )
 
 type Config struct {
-	AppName string `yaml:"appName"`
-	Feeds   []struct {
+	AppName      string `yaml:"appName"`
+	EpisodeLimit uint   `yaml:"episodeLimit"`
+	Feeds        []struct {
 		Name string `yaml:"name"`
 		URL  string `yaml:"url"`
 	} `yaml:"feeds"`
@@ -83,12 +84,12 @@ func main() {
 
 	context := context.Background()
 	episodeUrlMap := make(map[string]*gofeed.Item)
-	fs.Mkdir(context, "/podcasts", os.ModePerm)
 	for i, feedConfig := range config.Feeds {
-		feedBasePath := "/podcasts/" + feedConfig.Name
+		feedBasePath := "/" + feedConfig.Name
 		fs.Mkdir(context, feedBasePath, os.ModePerm)
-		for j, item := range feeds[i].Items {
-			episodePath := feedBasePath + "/" + makeEpisodeName(len(feeds[i].Items) - j, item)
+		for j := 0; j < min(len(feeds[i].Items), int(config.EpisodeLimit)); j++ {
+			item := feeds[i].Items[j]
+			episodePath := feedBasePath + "/" + makeEpisodeName(j, item)
 			episodeFile, err := fs.OpenFile(context, episodePath, os.O_CREATE|os.O_RDWR, 0644)
 			if err != nil {
 				log.Fatalf("Failed to create episode path: "+episodePath, err)
@@ -111,7 +112,7 @@ func main() {
 		case http.MethodGet:
 			// Serve audio files dynamically
 			webdavFilePath := r.URL.Path
-			if strings.HasPrefix(webdavFilePath, "/podcasts/") {
+			if strings.Contains(webdavFilePath, "episode") {
 				episode := episodeUrlMap[webdavFilePath]
 				if episode == nil {
 					return

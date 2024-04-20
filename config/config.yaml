@@ -3,6 +3,9 @@
 # No spaces in app name
 appName: Podcast2Webdev
 
+# Limit to the latest number of episodes
+episodeLimit: 30
+
 # The list of podcast feeds
 feeds:
   - name: nihongo-con-teppei-z
