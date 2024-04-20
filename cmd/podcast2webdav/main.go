@@ -7,9 +7,11 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
+
+	"strconv"
 
 	log "github.com/sirupsen/logrus"
-	"strconv"
 
 	"github.com/mmcdole/gofeed"
 	"github.com/spf13/pflag"
@@ -86,14 +88,14 @@ func main() {
 		feedBasePath := "/podcasts/" + feedConfig.Name
 		fs.Mkdir(context, feedBasePath, os.ModePerm)
 		for j, item := range feeds[i].Items {
-			// TODO: make an extension according to the mime type
-			episodePath := feedBasePath + "/episode" + strconv.Itoa(j) + ".mp3"
+			episodePath := feedBasePath + "/" + makeEpisodeName(len(feeds[i].Items) - j, item)
 			episodeFile, err := fs.OpenFile(context, episodePath, os.O_CREATE|os.O_RDWR, 0644)
 			if err != nil {
 				log.Fatalf("Failed to create episode path: "+episodePath, err)
 			}
 			episodeFile.Write([]byte{})
 			episodeUrlMap[episodePath] = item
+			episodeFile.Close()
 		}
 	}
 
@@ -138,4 +140,12 @@ func main() {
 	port := 8080
 	fmt.Printf("WebDAV server listening on port %d...\n", port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), nil))
+}
+
+func makeEpisodeName(index int, item *gofeed.Item) string {
+	url := item.Enclosures[0].URL
+	byDot := strings.Split(url, ".")
+	date := item.PublishedParsed.Format(time.DateOnly)
+	return date + "_episode" + strconv.Itoa(index) + "." + byDot[len(byDot)-1]
+
 }
